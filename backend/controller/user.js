@@ -91,7 +91,7 @@ export const login = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "none",
         secure: true,
       })
@@ -102,6 +102,10 @@ export const login = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };
 
@@ -121,43 +125,76 @@ export const logout = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      user: {
+        _id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile,
+      },
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };
 
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
-    const file = req.file; //here img file converted into string by getDataUri(file)
+    const file = req.file;
 
-    //cloudinary aayega idhar
-    const fileuri = getDataUri(file);
-    const cloudResponse = await cloudinary.uploader.upload(fileuri.content);
+    let cloudResponse = null;
+    if (file) {
+      const fileuri = getDataUri(file);
+      cloudResponse = await cloudinary.uploader.upload(fileuri.content);
+    }
 
     let skillsArray;
     if (skills) {
-      skillsArray = skills.split(",");
+      skillsArray = skills.split(",").map((skill) => skill.trim()).filter(Boolean);
     }
     const userId = req.id; //middleware authentication
     let user = await User.findById(userId);
 
-    //extra if condition as when user loggin then update work otherwise not.
     if (!user) {
       return res.status(400).json({
         message: "User not found",
         success: false,
       });
     }
-    //update data
+
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (skills) user.profile.skills = skillsArray;
-
-    //resume comes later here
+    if (skillsArray) user.profile.skills = skillsArray;
     if (cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url; //save the cloudinary url
-      user.profile.resumeOriginalName = file.originalname; //save the original file name
+      user.profile.resume = cloudResponse.secure_url;
+      user.profile.resumeOriginalName = file.originalname;
     }
 
     await user.save();
@@ -178,5 +215,9 @@ export const updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };

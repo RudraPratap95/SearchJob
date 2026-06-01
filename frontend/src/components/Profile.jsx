@@ -67,8 +67,8 @@ const Profile = () => {
         <div className="my-5">
           <h1>Skills</h1>
           <div className="flex items-center gap-1 mt-2">
-            {user?.profile?.skills.length != 0 ? (
-              user?.profile?.skills.map((item, index) => (
+            {user?.profile?.skills?.length > 0 ? (
+              user.profile.skills.map((item, index) => (
                 <Badge key={index}>{item}</Badge>
               ))
             ) : (
@@ -78,13 +78,14 @@ const Profile = () => {
         </div>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label className="text-md font-bold">Resume</Label>
-          {isResume ? (
+          {isResume && user?.profile?.resume ? (
             <a
-              target="blank"
-              href={user?.profile?.resume}
+              target="_blank"
+              rel="noreferrer"
+              href={user.profile.resume}
               className="text-blue-500 w-full hover:underline cursor-pointer"
             >
-              {user?.profile?.resumeOriginalName}
+              {user.profile.resumeOriginalName || "Download resume"}
             </a>
           ) : (
             <span>NA</span>
