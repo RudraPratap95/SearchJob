@@ -8,10 +8,9 @@ import { Company } from '../models/company.js';
 import { Job } from '../models/job.js';
 import { Application } from '../models/application.js';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/searchjob';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/searchjob';
 
 async function connect() {
-  // Mongoose 6+ no longer requires these options; pass the URI only
   await mongoose.connect(MONGODB_URI);
 }
 
