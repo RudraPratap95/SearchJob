@@ -45,7 +45,11 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/logout",
@@ -55,30 +59,50 @@ const appRouter = createBrowserRouter([
       {
         path: "/admin/companies",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["recruiter"]}>
             <Companies />
           </ProtectedRoute>
         ),
       },
       {
         path: "/admin/companies/create",
-        element: <CompanyCreate />,
+        element: (
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <CompanyCreate />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/admin/companies/:id",
-        element: <CompanySetup />,
+        element: (
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <CompanySetup />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/admin/jobs",
-        element: <AdminJobs />,
+        element: (
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <AdminJobs />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/admin/jobs/create",
-        element: <PostJob />,
+        element: (
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <PostJob />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/admin/jobs/:id/applicants",
-        element: <Applicants />,
+        element: (
+          <ProtectedRoute allowedRoles={["recruiter"]}>
+            <Applicants />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

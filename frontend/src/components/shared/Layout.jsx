@@ -5,7 +5,7 @@ import ScrollToTop from "./ScrollToTop";
 import ChatBot from "./ChatBot";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
-import { setUser } from "@/redux/authSlice";
+import { setUser, setAuthChecked } from "@/redux/authSlice";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -23,6 +23,8 @@ const Layout = () => {
         }
       } catch (error) {
         dispatch(setUser(null));
+      } finally {
+        dispatch(setAuthChecked(true));
       }
     };
 
