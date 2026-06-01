@@ -3,6 +3,7 @@ import FilterCard from "./FilterCard";
 import Navbar from "./shared/Navbar";
 import Job from "./Job";
 import { useSelector } from "react-redux";
+import useGetAllJobs from "@/hooks/useGetAllJobs";
 import { motion, AnimatePresence } from "framer-motion";
 import Footer from "./shared/Footer";
 import PageHero from "./shared/PageHero";
@@ -10,11 +11,13 @@ import { SlidersHorizontal, X, Search, ChevronDown, ChevronUp } from "lucide-rea
 
 const Jobs = () => {
   const { allJobs, searchedQuery } = useSelector((store) => store.job);
-  const [filterJobs,        setFilterJobs]        = useState(allJobs);
-  const [showMobileFilter,  setShowMobileFilter]  = useState(false);
-  const [activeFilters,     setActiveFilters]      = useState({});
-  const [showFilterPanel,   setShowFilterPanel]    = useState(true);
-  const [currentPage,       setCurrentPage]        = useState(1);
+  const [filterJobs, setFilterJobs] = useState(allJobs);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
+  const [showFilterPanel, setShowFilterPanel] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useGetAllJobs(activeFilters);
 
   const JOBS_PER_PAGE = 9; // ← Point 4: limit cards shown
 
