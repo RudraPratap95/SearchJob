@@ -36,15 +36,38 @@ const Jobs = () => {
       filtered = filtered.filter((job) => {
         return Object.entries(activeFilters).every(([category, values]) => {
           if (!values || values.length === 0) return true;
+
           return values.some((val) => {
-            const v = val.toLowerCase();
-            return (
-              job.title?.toLowerCase().includes(v)       ||
-              job.jobType?.toLowerCase().includes(v)     ||
-              job.location?.toLowerCase().includes(v)    ||
-              job.salary?.toString().includes(v)         ||
-              job.experienceLevel?.toString().includes(v)
-            );
+            const value = val.toLowerCase();
+            if (category === "Location") {
+              return job.location?.toLowerCase().includes(value);
+            }
+
+            if (category === "Role") {
+              return job.title?.toLowerCase().includes(value);
+            }
+
+            if (category === "Job Type") {
+              return job.jobType?.toLowerCase().includes(value);
+            }
+
+            if (category === "Salary") {
+              const salary = Number(job.salary);
+              if (value === "0-5 lpa") return salary <= 5;
+              if (value === "5-10 lpa") return salary > 5 && salary <= 10;
+              if (value === "10+ lpa") return salary > 10;
+              return true;
+            }
+
+            if (category === "Experience") {
+              const experience = Number(job.experienceLevel);
+              if (value === "fresher") return experience === 0;
+              if (value === "1-3 years") return experience >= 1 && experience <= 3;
+              if (value === "3+ years") return experience > 3;
+              return true;
+            }
+
+            return true;
           });
         });
       });
