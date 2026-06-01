@@ -76,7 +76,8 @@ export const login = async (req, res) => {
     const tokenData = {
       userId: user._id,
     };
-    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+    const secret = process.env.JWT_SECRET || process.env.SECRET_KEY;
+    const token = await jwt.sign(tokenData, secret, {
       expiresIn: "1d",
     });
     user = {
@@ -93,7 +94,7 @@ export const login = async (req, res) => {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "none",
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
       })
       .json({
         message: `Welcome back ${user.fullname}`,
